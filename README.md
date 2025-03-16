@@ -20,15 +20,17 @@ Because each "project" has its own go file it's necessary to cd into the top lev
 
 ## Running the services
 
-File monitor:
-
-```./run-file-monitor -folder=[folder, defaults to ./input-folder] -address=[address of writer, defaults to http://localhost:8080]```
-
 Storage Service
 
 ```./run-storage-service  -folder=[folder, defaults to ./output-folder] -port=[port, defaults to 8080]```
 
-NOTE: in each case the directory must exist and be accessible prior to running the services.
+File Monitor:
+
+```./run-file-monitor -folder=[folder, defaults to ./input-folder] -address=[address of writer, defaults to http://localhost:8080]```
+
+NOTE: Run these in the order Storage Service THEN File Monitor
+NOTE: Just running the run files using the defaults should work 
+NOTE: In each case the directory must exist and be accessible prior to running the services.
 
 ## Using the services
 
