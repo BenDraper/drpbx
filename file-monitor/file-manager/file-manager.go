@@ -99,7 +99,7 @@ func (fm *FileManager) diff(entries map[string]time.Time) (create, delete, updat
 		}
 	}
 
-	for entry, _ := range fm.oldFiles {
+	for entry := range fm.oldFiles {
 		if _, ok := entries[entry]; !ok {
 			delete = append(delete, entry)
 		}
