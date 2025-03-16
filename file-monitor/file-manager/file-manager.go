@@ -11,16 +11,14 @@ import (
 type FileManager struct {
 	folder   string
 	transfer transfer.Transfer
-	stopped  bool
-	oldFiles map[string]os.FileInfo
+	oldFiles map[string]time.Time
 }
 
 func NewFileManager(folder string, transfer transfer.Transfer) *FileManager {
 	return &FileManager{
 		folder:   folder,
 		transfer: transfer,
-		stopped:  false,
-		oldFiles: make(map[string]os.FileInfo),
+		oldFiles: make(map[string]time.Time),
 	}
 }
 
@@ -29,11 +27,7 @@ func (fm *FileManager) MonitorFolder() {
 		//Eventual consistency is fine. Don't need to poll too often.
 		time.Sleep(1 * time.Second)
 
-		if fm.stopped {
-			break
-		}
-
-		entryMap := map[string]os.FileInfo{}
+		entryMap := map[string]time.Time{}
 
 		entries, err := os.ReadDir(fm.folder)
 		if err != nil {
@@ -52,7 +46,7 @@ func (fm *FileManager) MonitorFolder() {
 				log.Fatal(err)
 			}
 
-			entryMap[entry.Name()] = info
+			entryMap[entry.Name()] = info.ModTime()
 
 		}
 
@@ -90,18 +84,18 @@ func (fm *FileManager) sendDiffs(creates, updates, deletes []string) {
 
 }
 
-func (fm *FileManager) diff(entries map[string]os.FileInfo) (create, delete, update []string) {
-	for entry, info := range entries {
-		oldInfo, ok := fm.oldFiles[entry]
+func (fm *FileManager) diff(entries map[string]time.Time) (create, delete, update []string) {
+	for entry, tm := range entries {
+		oldTime, ok := fm.oldFiles[entry]
 
 		if !ok {
 			create = append(create, entry)
 			continue
 		}
 
-		if info.ModTime() != oldInfo.ModTime() {
+		//Check last modified time to see if file has been updated.
+		if !tm.Equal(oldTime) {
 			update = append(update, entry)
-			continue
 		}
 	}
 
