@@ -18,11 +18,11 @@ The other folders are to act as input and output.
 
 File monitor:
 
-./run-file-monitor -folder=[folder, defaults to ./input-folder] -address=[address of writer, defaults to http://localhost:8080]
+```./run-file-monitor -folder=[folder, defaults to ./input-folder] -address=[address of writer, defaults to http://localhost:8080]```
 
 Storage Service
 
-./run-storage-service  -folder=[folder, defaults to ./output-folder] -port=[port, defaults to 8080]
+```./run-storage-service  -folder=[folder, defaults to ./output-folder] -port=[port, defaults to 8080]```
 
 NOTE: in each case the directory must exist and be accessible prior to running the services.
 
