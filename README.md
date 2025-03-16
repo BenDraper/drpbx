@@ -3,8 +3,8 @@
 
 There are two apps here in the folders:
 
-file-monitor
-storage-service
+- file-monitor
+- storage-service
 
 For convenience, I've put both of these in the same project but, were this a real-world application, they would be two different projects with their own repositories etc.
 
@@ -16,7 +16,7 @@ The other folders are to act as input and output. There's also a test files fold
 
 ## Running Go checks
 
-Because each "project" has its own go file it's necessary to cd into the top level folder for each project
+Because each "project" has its own go file it's necessary to cd into the top level folder for each project. You can then run go vet ./... and go test ./... as you see fit.
 
 ## Running the services
 
@@ -47,6 +47,7 @@ Simply add to, update or remove a file from the specified directory and see the 
 - Delete just uses plain text body. Might want to use JSON or something.
 - Could check http method for extra security.
 - Might be possible to batch requests, especially delete requests, to make things faster.
+- Unit tests just check for core functionality. It might be a good idea to benchmark some of them for memory usage to ensure the multi-part file sender works to minimise memory usage.
 - For the sake of time I didn't write a unit test for Local.Update() because it doesn't have any functionality outside Create and Delete. In reality I'd still test this because it's possible that how this is implemented could change in future and it would be good to capture its current functionality in tests.
 - Because these apps are so IO heavy, it's hard to unit test them very well. It would be nice to have a set of integration tests where you spin up both services on one machine and run a test which creates, updates and deletes files in the target folder. You can also more easily simulate IO errors there. 
 
