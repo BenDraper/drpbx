@@ -3,7 +3,6 @@ package local
 import (
 	"io"
 	"log"
-	"mime/multipart"
 	"os"
 	"path/filepath"
 )
@@ -18,7 +17,9 @@ func NewLocal(directory string) *Local {
 	}
 }
 
-func (l *Local) Create(file multipart.File, filename string) error {
+func (l *Local) Create(file io.ReadCloser, filename string) error {
+	defer file.Close()
+
 	dstPath := filepath.Join(l.directory, filename)
 	dstFile, err := os.Create(dstPath)
 	if err != nil {
@@ -34,7 +35,7 @@ func (l *Local) Create(file multipart.File, filename string) error {
 	return nil
 }
 
-func (l *Local) Update(file multipart.File, filename string) error {
+func (l *Local) Update(file io.ReadCloser, filename string) error {
 	if err := l.Delete(filename); err != nil {
 		return err
 	}
@@ -47,12 +48,12 @@ func (l *Local) Update(file multipart.File, filename string) error {
 	return nil
 }
 
-func (l *Local) Delete(path string) error {
+func (l *Local) Delete(filename string) error {
 
-	if err := os.Remove(filepath.Join(l.directory, path)); err != nil {
+	if err := os.Remove(filepath.Join(l.directory, filename)); err != nil {
 		return err
 	}
 
-	log.Printf("Deleted file: %s", path)
+	log.Printf("Deleted file: %s", filename)
 	return nil
 }

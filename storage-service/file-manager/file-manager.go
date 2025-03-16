@@ -1,11 +1,11 @@
 package file_manager
 
 import (
-	"mime/multipart"
+	"io"
 )
 
 type FileManager interface {
-	Create(file multipart.File, filename string) error
-	Update(file multipart.File, filename string) error
+	Create(file io.ReadCloser, filename string) error
+	Update(file io.ReadCloser, filename string) error
 	Delete(file string) error
 }

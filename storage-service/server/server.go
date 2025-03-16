@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"mime/multipart"
 	"net/http"
 )
 
@@ -43,7 +42,7 @@ func (s *Server) Create(w http.ResponseWriter, r *http.Request) {
 	s.write(w, r, s.fileManager.Create)
 }
 
-func (s *Server) write(w http.ResponseWriter, r *http.Request, writeToFileFunc func(multipart.File, string) error) {
+func (s *Server) write(w http.ResponseWriter, r *http.Request, writeToFileFunc func(io.ReadCloser, string) error) {
 	if err := r.ParseMultipartForm(10 << 20); err != nil { // 10MB memory buffer
 		http.Error(w, "Failed to parse form", http.StatusBadRequest)
 		return
@@ -69,6 +68,11 @@ func (s *Server) Delete(w http.ResponseWriter, r *http.Request) {
 	file, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if len(file) == 0 {
+		http.Error(w, "File is empty", http.StatusBadRequest)
 		return
 	}
 

@@ -18,12 +18,14 @@ const (
 )
 
 type HTTPTransfer struct {
-	url string
+	url    string
+	client *http.Client
 }
 
 func NewHTTPTransfer(url string) *HTTPTransfer {
 	return &HTTPTransfer{
-		url: url,
+		url:    url,
+		client: &http.Client{},
 	}
 }
 
@@ -65,8 +67,7 @@ func (h *HTTPTransfer) send(filePath, endpoint string) error {
 	}
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := h.client.Do(req)
 	if err != nil {
 		log.Printf("failed to send request: %s", err.Error())
 		return err
@@ -99,8 +100,7 @@ func (h *HTTPTransfer) Delete(filename string) error {
 
 	req.Header.Set("Content-Type", "text/plain")
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := h.client.Do(req)
 	if err != nil {
 		log.Printf("failed to send request: %s", err.Error())
 		return err
@@ -110,7 +110,7 @@ func (h *HTTPTransfer) Delete(filename string) error {
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
 		log.Printf("upload failed: %s", body)
-		return err
+		return fmt.Errorf("failed to delete file: %s", string(body))
 	}
 
 	fmt.Println("File deleted successfully")
